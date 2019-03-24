@@ -1,0 +1,39 @@
+ <script>
+    function debounce(func, wait = 20, immediate = true) {
+      var timeout;
+      return function() {
+        var context = this, args = arguments;
+        var later = function() {
+          timeout = null;
+          if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+      };
+    };
+    //Velur myndir sem á að vinna með
+    const sliderImages = document.querySelectorAll('.slide-in');
+    //Keyrir í hvert skipti sem notandi scrollar
+    function checkSlide() {
+      //
+      sliderImages.forEach(sliderImage => {
+        // half way through the image
+        //Finnur pixel staðsetningu á botn á skjá og birtir mynd þegar hann er hálfnaður með að scrolla í gegnum hana
+        const slideInAt = (window.scrollY + window.innerHeight) - sliderImage.height / 2;
+        // bottom of the image
+        //Gerir það sama og síðasta lína nem þegar þú scrollar upp í staðinn fyrir niður
+        const imageBottom = sliderImage.offsetTop + sliderImage.height;
+        const isHalfShown = slideInAt > sliderImage.offsetTop;
+        const isNotScrolledPast = window.scrollY < imageBottom;
+        //ef þú ert farinn hálfa leið niður myndina og ekki farinn framhjá henna þá birtist hún annars hverfur hún
+        if (isHalfShown && isNotScrolledPast) {
+          sliderImage.classList.add('active');
+        } else {
+          sliderImage.classList.remove('active');
+        }
+      });
+    }
+    //Keyrir checkSlide() þegar notandi scrollar
+    window.addEventListener('scroll', debounce(checkSlide));
